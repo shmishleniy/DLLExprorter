@@ -3,8 +3,13 @@ DLLExprorter
 
 Exprort methods to unmanaged code in C#
 
-Usage:
-	DLLExporter.exe -in:X:\library.dll [-out:X:\some_folder\library.dll] [-noclear]
+## Command-line arguments:
+```
+DLLExporter.exe -in:X:\library.dll [-out:X:\some_folder\library.dll] [-noclear]
+```
+* -in:		Input dll file
+* -out:		Output dll file
+* -noclean	Don't remove *.il adn *.res from output folder
 
-Add to post-buid in your project for example:
-	D:\DLLExprorter.exe -in:"$(TargetPath)" -out:"D:\OutputFolder\$(TargetFileName)"
+## Examples:
+[Visual Studio usage example](https://github.com/shmishleniy/DLLExprorter/wiki/Example-usage-in-Visual-Studio)

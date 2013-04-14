@@ -7,10 +7,15 @@ namespace DLLExprorter
 {
     class Program
     {
-        public static string help = @"DLLExporter.exe -in:X:\library.dll [-out:X:\some_folder\library.dll] [-noclear]";
+        public static string help = @"DLLExporter.exe -in:X:\library.dll [-out:X:\some_folder\library.dll] [-noclean]";
+        public static string inArg = "-in:";
+        public static string outArg = "-out:";
+        public static string noCleanArg = "-noclean";
 
         public static void Main(string[] args)
         {
+            Console.WriteLine(args);
+
             Console.WriteLine("\n------ DLLExporter Start ------");
 
             string inDllFile = null;
@@ -49,7 +54,8 @@ namespace DLLExprorter
             Console.WriteLine(err != 0 ? "Error Compile IL" : "Export Successful");
 
             if (clearOutput)
-            {   
+            {
+                Console.WriteLine("Clean output folder (remove *.il and *.res). To disable run with -noclean argument.");
                 string directoryPath = Path.GetDirectoryName(ilPath);
                 ILTool.CleanUpDirectory(directoryPath);
             }
@@ -62,17 +68,17 @@ namespace DLLExprorter
             clearOutput = true;
             foreach (string arg in args)
             {
-                if (arg.StartsWith("-in:"))
+                if (arg.StartsWith(inArg))
                 {
-                    inDllFile = arg.Substring(4);
+                    inDllFile = arg.Substring(inArg.Length);
                 }
 
-                if (arg.StartsWith("-out:"))
+                if (arg.StartsWith(outArg))
                 {
-                    outDllFile = arg.Substring(4);
+                    outDllFile = arg.Substring(outArg.Length);
                 }
 
-                if (arg.StartsWith("-noclear"))
+                if (arg.StartsWith(noCleanArg))
                 {
                     clearOutput = false;
                 }
@@ -86,6 +92,10 @@ namespace DLLExprorter
                 Console.WriteLine("Copying dll: " + Environment.NewLine +
                                   "\tfrom: {0}" + Environment.NewLine +
                                   "\tto: {1}", fromDllPath, toDllPath);
+                if (!Directory.Exists(Path.GetDirectoryName(toDllPath)))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(toDllPath));
+                }
                 File.Copy(fromDllPath, toDllPath, true);
             }
         }
