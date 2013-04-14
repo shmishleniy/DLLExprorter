@@ -5,7 +5,7 @@ Exprort methods to unmanaged code in C#
 
 ## Command-line arguments:
 ```
-DLLExporter.exe -in:X:\library.dll [-out:X:\some_folder\library.dll] [-noclear]
+DLLExporter.exe -in:X:\library.dll [-out:X:\some_folder\library.dll] [-noclean]
 ```
 * -in:		Input dll file
 * -out:		Output dll file
