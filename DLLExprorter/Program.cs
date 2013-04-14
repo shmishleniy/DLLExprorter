@@ -17,6 +17,21 @@ namespace DLLExprorter
             }
 
             var dllPath = args[0];
+
+            var shouldPreserveOriginalDll = args.Length >= 2;
+            if (shouldPreserveOriginalDll)
+            {
+                var outputDllPath = args[1];
+                if (outputDllPath != dllPath)
+                {
+                    Console.WriteLine("Copying dll: " + Environment.NewLine +
+                                      "\tfrom: {0}" + Environment.NewLine +
+                                      "\tto: {1}", dllPath, outputDllPath);
+                    File.Copy(dllPath, outputDllPath, true);
+                }
+                dllPath = outputDllPath;
+            }
+
             Console.WriteLine(String.Format("Processing: {0}", Path.GetFileName(dllPath)));
 
             String ilPath;
