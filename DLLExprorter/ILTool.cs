@@ -5,7 +5,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Microsoft.Build.Utilities;
-using System.Windows.Forms;
 
 namespace DLLExprorter
 {
@@ -105,7 +104,7 @@ namespace DLLExprorter
             var process = new Process { StartInfo = processInfo };
             process.Start();
             process.WaitForExit();
-            //File.Delete(ilPath);
+
             return process.ExitCode != 0 ? process.ExitCode : 0;
         }
 
@@ -151,6 +150,26 @@ namespace DLLExprorter
                 ilCode.Insert(corMatch.Groups[1].Index + corMatch.Groups[1].Length, String.Format(VtMem, i+1));
             }
             return 0;
+        }
+
+        /// <summary>
+        /// Removes .il and .res in specified folder
+        /// </summary>
+        public static void CleanUpDirectory(string path)
+        {
+            RemoveFiles(Directory.GetFiles(path, "*.il"));
+            RemoveFiles(Directory.GetFiles(path, "*.res"));
+        }
+
+        /// <summary>
+        /// Removes files specified in array
+        /// </summary>
+        public static void RemoveFiles(string[] files)
+        {
+            foreach (string file in files) 
+            {
+                File.Delete(file);
+            }
         }
     }
 }

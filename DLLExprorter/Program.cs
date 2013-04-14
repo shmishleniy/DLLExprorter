@@ -7,29 +7,28 @@ namespace DLLExprorter
 {
     class Program
     {
+        public static string help = @"DLLExporter.exe -in:X:\library.dll [-out:X:\some_folder\library.dll] [-noclear]";
+
         public static void Main(string[] args)
         {
             Console.WriteLine("\n------ DLLExporter Start ------");
-            if (args.Length < 1)
+
+            string inDllFile = null;
+            string outDllFile = null;
+            bool clearOutput = true;
+            ParseArgs(args, out inDllFile, out outDllFile, out clearOutput);
+            
+            if (string.IsNullOrEmpty(inDllFile))
             {
-                Console.WriteLine(@"Wrong Parametr -> DLLExporter.exe X:\library.dll");
+                Console.WriteLine(@"Wrong usage. Help:" + Environment.NewLine + help);
                 return;
             }
 
-            var dllPath = args[0];
-
-            var shouldPreserveOriginalDll = args.Length >= 2;
-            if (shouldPreserveOriginalDll)
+            var dllPath = inDllFile;
+            if (!string.IsNullOrEmpty(outDllFile))
             {
-                var outputDllPath = args[1];
-                if (outputDllPath != dllPath)
-                {
-                    Console.WriteLine("Copying dll: " + Environment.NewLine +
-                                      "\tfrom: {0}" + Environment.NewLine +
-                                      "\tto: {1}", dllPath, outputDllPath);
-                    File.Copy(dllPath, outputDllPath, true);
-                }
-                dllPath = outputDllPath;
+                CopyDLL(inDllFile, outDllFile);
+                dllPath = outDllFile;
             }
 
             Console.WriteLine(String.Format("Processing: {0}", Path.GetFileName(dllPath)));
@@ -48,6 +47,47 @@ namespace DLLExprorter
 
             err = ILTool.ILtoDLL(ilPath, ilCode);
             Console.WriteLine(err != 0 ? "Error Compile IL" : "Export Successful");
+
+            if (clearOutput)
+            {   
+                string directoryPath = Path.GetDirectoryName(ilPath);
+                ILTool.CleanUpDirectory(directoryPath);
+            }
+        }
+
+        public static void ParseArgs(string[] args, out string inDllFile, out string outDllFile, out bool clearOutput)
+        {
+            inDllFile = null;
+            outDllFile = null;
+            clearOutput = true;
+            foreach (string arg in args)
+            {
+                if (arg.StartsWith("-in:"))
+                {
+                    inDllFile = arg.Substring(4);
+                }
+
+                if (arg.StartsWith("-out:"))
+                {
+                    outDllFile = arg.Substring(4);
+                }
+
+                if (arg.StartsWith("-noclear"))
+                {
+                    clearOutput = false;
+                }
+            }
+        }
+
+        public static void CopyDLL(string fromDllPath, string toDllPath)
+        {
+            if (toDllPath != fromDllPath)
+            {
+                Console.WriteLine("Copying dll: " + Environment.NewLine +
+                                  "\tfrom: {0}" + Environment.NewLine +
+                                  "\tto: {1}", fromDllPath, toDllPath);
+                File.Copy(fromDllPath, toDllPath, true);
+            }
         }
     }
 }
